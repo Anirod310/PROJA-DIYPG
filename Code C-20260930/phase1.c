@@ -11,13 +11,13 @@ void printKey(rsaKey_t key, const char* keyName){
 
 }
 
-int saveKeytoFile(rsaKey_t key, const char* filename){
+int saveKeytoFile(keyPair_t keyP, const char* filename){
 
     FILE* file = fopen(filename,"wb");
     if(file==NULL){
         printf("mauvais fich");
     }
-    size_t written = fwrite(&key, sizeof(keyPair_t), 1, file);
+    size_t written = fwrite(&keyP, sizeof(keyPair_t), 1, file);
     fclose(file);
     
     return written == 1; 
