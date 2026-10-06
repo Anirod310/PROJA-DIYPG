@@ -1,24 +1,24 @@
-\# DIYPG — Phase 1.0 : bilan
+# DIYPG — Phase 1.0 : bilan
 
 
 
-\*\*Équipe :\*\* <!-- noms, prénoms, groupe -->
+**Équipe :** <!-- noms, prénoms, groupe -->
 
-\*\*Date :\*\* <!-- jj/mm/aaaa -->
+**Date :** <!-- jj/mm/aaaa -->
 
 
 
 Ce README est le bilan de la phase 1.0 demandé par le sujet :
 
-\*\*valeur de `MAXPRIME`\*\* et \*\*exhaustivité des tests\*\*.
+**valeur de `MAXPRIME`** et **exhaustivité des tests**.
 
 
 
-\---
+---
 
 
 
-\## 0. Compilation et exécution (rappel)
+## 0. Compilation et exécution (rappel)
 
 
 
@@ -36,15 +36,15 @@ Fichiers du livrable : <!-- ex. rsa\_tools.c, bezout.c, rsa\_keys\_io.c, test\_p
 
 
 
-\---
+---
 
 
 
-\## 1. Bilan : valeur de `MAXPRIME`
+## 1. Bilan : valeur de `MAXPRIME`
 
 
 
-\### 1.1 Rôle de la constante
+### 1.1 Rôle de la constante
 
 
 
@@ -54,19 +54,19 @@ Fichiers du livrable : <!-- ex. rsa\_tools.c, bezout.c, rsa\_keys\_io.c, test\_p
 
 
 
-\### 1.2 Méthode de mesure
+### 1.2 Méthode de mesure
 
 
 
-\- Nombre de paires de clefs générées par valeur de `MAXPRIME` : <!-- ex. 200 -->
+- Nombre de paires de clefs générées par valeur de `MAXPRIME` : <!-- ex. 200 -->
 
-\- Pour chaque paire : chiffrement puis déchiffrement des 256 valeurs d'octet (0 à 255).
+- Pour chaque paire : chiffrement puis déchiffrement des 256 valeurs d'octet (0 à 255).
 
-\- `MAXPRIME` passée à la compilation avec `-DMAXPRIME=<valeur>` (le header contient
+- `MAXPRIME` passée à la compilation avec `-DMAXPRIME=<valeur>` (le header contient
 
 &#x20; `#ifndef MAXPRIME … #endif`).
 
-\- Commande utilisée :
+- Commande utilisée :
 
 
 
@@ -86,7 +86,7 @@ done
 
 
 
-\### 1.3 Résultats
+### 1.3 Résultats
 
 
 
@@ -110,21 +110,21 @@ done
 
 
 
-\### 1.4 Valeur limite trouvée
+### 1.4 Valeur limite trouvée
 
 
 
-\- Plus grande valeur de `MAXPRIME` \*\*sans\*\* dépassement : \*\*<!-- \_\_\_ -->\*\*
+- Plus grande valeur de `MAXPRIME` \*\*sans\*\* dépassement : \*\*<!-- \_\_\_ -->\*\*
 
-\- Plus petite valeur de `MAXPRIME` \*\*avec\*\* dépassement : \*\*<!-- \_\_\_ -->\*\*
+- Plus petite valeur de `MAXPRIME` \*\*avec\*\* dépassement : \*\*<!-- \_\_\_ -->\*\*
 
-\- Encadrement du seuil : <!-- \_\_\_ ≤ seuil < \_\_\_ -->
+- Encadrement du seuil : <!-- \_\_\_ ≤ seuil < \_\_\_ -->
 
-\- Premier module `N` pour lequel un échec a été observé : <!-- \_\_\_ -->
+- Premier module `N` pour lequel un échec a été observé : <!-- \_\_\_ -->
 
 
 
-\### 1.5 Explication du dépassement
+### 1.5 Explication du dépassement
 
 
 
@@ -136,23 +136,23 @@ done
 
 
 
-\### 1.6 Valeur retenue pour la suite du projet
+### 1.6 Valeur retenue pour la suite du projet
 
 
 
-\*\*`MAXPRIME` = <!-- \_\_\_ -->\*\*, car : <!-- justification -->
+**`MAXPRIME` = <!-- \_\_\_ -->**, car : <!-- justification -->
 
 
 
-\---
+---
 
 
 
-\## 2. Bilan : exhaustivité des tests
+## 2. Bilan : exhaustivité des tests
 
 
 
-\### 2.1 Tests réalisés par rapport au cahier des charges
+### 2.1 Tests réalisés par rapport au cahier des charges
 
 
 
@@ -172,7 +172,7 @@ done
 
 
 
-\### 2.2 Étendue des données testées
+### 2.2 Étendue des données testées
 
 
 
@@ -192,7 +192,7 @@ done
 
 
 
-\### 2.3 Cas limites et cas d'erreur
+### 2.3 Cas limites et cas d'erreur
 
 
 
@@ -212,7 +212,7 @@ done
 
 
 
-\### 2.4 Ce qui n'est pas testé
+### 2.4 Ce qui n'est pas testé
 
 
 
@@ -220,13 +220,13 @@ done
 
 
 
-\### 2.5 Conclusion sur l'exhaustivité
+### 2.5 Conclusion sur l'exhaustivité
 
 
 
-\- Nombre total d'assertions exécutées : <!-- \_\_\_ --> — échecs : <!-- \_\_\_ --> — ignorées : <!-- \_\_\_ -->
+- Nombre total d'assertions exécutées : <!-- \_\_\_ --> — échecs : <!-- \_\_\_ --> — ignorées : <!-- \_\_\_ -->
 
-\- Outils complémentaires utilisés (le cas échéant) : <!-- valgrind, -fsanitize=address,undefined… -->
+- Outils complémentaires utilisés (le cas échéant) : <!-- valgrind, -fsanitize=address,undefined… -->
 
 \- Appréciation globale : <!-- 2 à 3 phrases -->
 
