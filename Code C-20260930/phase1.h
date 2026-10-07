@@ -8,7 +8,7 @@
 
 
 void printKey(rsaKey_t key, const char* keyName);
-int saveKeytoFile(rsaKey_t key, const char* filename);
+int saveKeytoFile(keyPair_t keyP, const char* filename);
 
 
 
