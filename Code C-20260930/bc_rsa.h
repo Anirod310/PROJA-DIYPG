@@ -10,6 +10,7 @@
 #include <time.h>
 #include "sha256.h"
 #include "sha256_utils.h"
+#include <stdint.h>
 
 #define MAX_BUF 1024
 #define MAX_STRING 64
@@ -60,7 +61,7 @@ typedef struct transaction {
 
 typedef struct account {
   char user[MAX_STRING];
-	uint32 solde;
+	uint32_t solde;
 } Account;
 
 #endif // __BC_DEFINES__
