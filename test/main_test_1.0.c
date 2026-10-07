@@ -1,12 +1,10 @@
-/*
- * test_phase1_0.c — Main de test de la phase 1.0 (squelette)
- * Chaque test retourne le nombre d'échecs (0 = OK).
- * Usage : ./test_phase1_0 [nb_paires]
- */
+//test_phase1_0.c — Main de test de la phase 1.0 
+//Usage : ./test_phase1_0 [nb_paires]
+
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include "rsa_common_header.h"   /* rsaKey_t, MAXPRIME */
+#include "rsa_common_header.h"   // Pour rsaKey_t et MAXPRIME 
 //#include "rsa_keys_io.h"         /* TODO : affichage hexa, sauvegarde/chargement */
 
 /* T1 — Exemple du cours : (33,3) / (33,7), M=4 -> C=31 -> 4 */
@@ -33,7 +31,7 @@ static int test_affichage_hexa(void)
     return echecs;
 }
 
-/* T4 — Sauvegarde / chargement (point 4) */
+/* T4 — Sauvegarde / chargement (point 4) -> Pas forcément utile, à voir*/
 static int test_sauvegarde_chargement(void)
 {
     int echecs = 0;
@@ -54,10 +52,16 @@ static int test_boucle_paires(int nb_paires)
 
 int main(int argc, char **argv)
 {
-    int nb_paires = (argc > 1) ? atoi(argv[1]) : 20;
+    int nb_paires;
     int echecs = 0;
 
-    printf("Tests phase 1.0 (MAXPRIME=%d, nb_paires=%d)\n", (int)MAXPRIME, nb_paires);
+    if (argc > 1) {
+    nb_paires = atoi(argv[1]);
+    } else {
+        nb_paires = 20;
+    }
+
+    printf("Tests phase 1.0 (MAXPRIME=%d, nb_paires=%d)\n", (int)MAX_PRIME, nb_paires);
 
     echecs += test_exemple_cours();
     echecs += test_generation_affichage();
@@ -66,5 +70,9 @@ int main(int argc, char **argv)
     echecs += test_boucle_paires(nb_paires);
 
     printf("Bilan : %d echec(s)\n", echecs);
-    return echecs ? EXIT_FAILURE : EXIT_SUCCESS;
+    if (echecs > 0) {
+        return EXIT_FAILURE;
+    } else {
+        return EXIT_SUCCESS;
+    }
 }

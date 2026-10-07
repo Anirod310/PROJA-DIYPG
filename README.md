@@ -1,36 +1,14 @@
 # DIYPG — Phase 1.0 : bilan
 
 
-
-**Équipe :** <!-- noms, prénoms, groupe -->
-
 **Date :** <!-- jj/mm/aaaa -->
-
-
-
-Ce README est le bilan de la phase 1.0 demandé par le sujet :
-
-**valeur de `MAXPRIME`** et **exhaustivité des tests**.
-
 
 
 ---
 
-
-
-## 0. Compilation et exécution (rappel)
-
-
-
+Compilation et execution de la phase : 
 ```bash
-
-make test\_phase1\_0
-
-./test\_phase1\_0 \[nb\_paires]        # défaut : 20
-
 ```
-
-
 
 Fichiers du livrable : <!-- ex. rsa\_tools.c, bezout.c, rsa\_keys\_io.c, test\_phase1\_0.c, Makefile, README.md -->
 
@@ -40,15 +18,14 @@ Fichiers du livrable : <!-- ex. rsa\_tools.c, bezout.c, rsa\_keys\_io.c, test\_p
 
 
 
-## 1. Bilan : valeur de `MAXPRIME`
+## 1. Valeur de MAXPRIME
 
 
 
-### 1.1 Rôle de la constante
+### 1.1 Son Role
 
 
-
-`MAXPRIME` est définie dans `rsa\_common\_header.h` (valeur par défaut : \*\*10000\*\*).
+MAXPRIME est définie dans rsa\_common\_header.h (valeur par défaut : 10000).
 
 <!-- Préciser en une phrase son rôle exact dans votre code : borne supérieure des nombres premiers p et q générés ? -->
 
@@ -58,17 +35,13 @@ Fichiers du livrable : <!-- ex. rsa\_tools.c, bezout.c, rsa\_keys\_io.c, test\_p
 
 
 
-- Nombre de paires de clefs générées par valeur de `MAXPRIME` : <!-- ex. 200 -->
+- Nombre de paires de clefs générées par valeur de MAXPRIME : <!-- ex. 200 -->
 
 - Pour chaque paire : chiffrement puis déchiffrement des 256 valeurs d'octet (0 à 255).
 
-- `MAXPRIME` passée à la compilation avec `-DMAXPRIME=<valeur>` (le header contient
+- MAXPRIME passée à la compilation avec -DMAXPRIME=<valeur>.
 
-&#x20; `#ifndef MAXPRIME … #endif`).
-
-- Commande utilisée :
-
-
+- Commandes utilisée :
 
 ```bash
 
@@ -114,13 +87,13 @@ done
 
 
 
-- Plus grande valeur de `MAXPRIME` \*\*sans\*\* dépassement : \*\*<!-- \_\_\_ -->\*\*
+- Plus grande valeur de MAXPRIME sans dépassement : <!-- \_\_\_ -->
 
-- Plus petite valeur de `MAXPRIME` \*\*avec\*\* dépassement : \*\*<!-- \_\_\_ -->\*\*
+- Plus petite valeur de MAXPRIME avec dépassement : <!-- \_\_\_ -->
 
 - Encadrement du seuil : <!-- \_\_\_ ≤ seuil < \_\_\_ -->
 
-- Premier module `N` pour lequel un échec a été observé : <!-- \_\_\_ -->
+- Premier module N pour lequel un échec a été observé : <!-- \_\_\_ -->
 
 
 
@@ -140,7 +113,7 @@ done
 
 
 
-**`MAXPRIME` = <!-- \_\_\_ -->**, car : <!-- justification -->
+**MAXPRIME = <!-- \_\_\_ -->**, car : <!-- justification -->
 
 
 
@@ -148,7 +121,7 @@ done
 
 
 
-## 2. Bilan : exhaustivité des tests
+## 2. Exhaustivité des tests
 
 
 
@@ -168,7 +141,7 @@ done
 
 | Chiffrement/déchiffrement d'un caractère UTF-8, boucle sur plusieurs paires | <!-- ex. T5 --> | <!-- --> | |
 
-| Variation de `MAXPRIME` (dépassement uint64) | <!-- campagne §1 --> | <!-- --> | |
+| Variation de MAXPRIME (dépassement uint64) | <!-- campagne §1 --> | <!-- --> | |
 
 
 
@@ -186,7 +159,7 @@ done
 
 | Caractères UTF-8 | <!-- ex. ASCII, é (2 octets), € (3 octets) --> | |
 
-| Valeurs de `MAXPRIME` | <!-- liste --> | |
+| Valeurs de MAXPRIME | <!-- liste --> | |
 
 | Exemple de référence du cours (33, 3) / (33, 7) | <!-- oui / non --> | |
 
@@ -200,7 +173,7 @@ done
 
 |-----|:-------:|---------------------|
 
-| Module `N` ≤ 255 (octet ≥ N, chiffrement non injectif) | | |
+| Module N ≤ 255 (octet ≥ N, chiffrement non injectif) | | |
 
 | Fichier de clefs inexistant | | |
 
