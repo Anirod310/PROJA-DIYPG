@@ -65,4 +65,3 @@ typedef struct account {
 } Account;
 
 #endif // __BC_DEFINES__
->>>>>>> 572dbf656c359acdaf841f2583a979ea139a7fde:Code C-20260930/bc_rsa.h
