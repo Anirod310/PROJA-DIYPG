@@ -1,8 +1,8 @@
-#include "../rsa_common_header.h"
+#include "phase1.h"
 // conversion 4 octets en un int
 uint32_t convert_4byte2int(uint8_t *b){
   // ordre little endian
-  uint32_t nombre = b[3]<<24 | b[2]<<16 | b[1]<<8 | b[0];
+  uint32_t nombre = ((uint32_t)b[3]<<24) | ((uint32_t)b[2]<<16) | ((uint32_t)b[1]<<8) | (uint32_t)b[0];
 	//uint nombre = b[0]<<24 | b[1]<<16 | b[2]<<8 | b[3]; big endian
   return nombre;
 }
