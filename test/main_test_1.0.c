@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "rsa_common_header.h"   // Pour rsaKey_t et MAXPRIME 
-//#include "rsa_keys_io.h"         /* TODO : affichage hexa, sauvegarde/chargement */
+#include "rsa_common_header.h"   // Pour rsaKey_t et MAXPRIME
+#include "phase1.h"
 
 /* T1 — Exemple du cours : (33,3) / (33,7), M=4 -> C=31 -> 4 */
 static int test_exemple_cours(void)
@@ -24,11 +24,9 @@ static int test_generation_affichage(void)
 }
 
 /* T3 — Affichage hexadécimal (point 2) */
-static int test_affichage_hexa(void)
+    test_affichage_hexa(rsaKey_t key, const char* keyName)
 {
-    int echecs = 0;
-    /* TODO : afficher une clef connue, comparer au format attendu */
-    return echecs;
+    printKeyHexa(key, keyName);
 }
 
 /* T4 — Sauvegarde / chargement (point 4) -> Pas forcément utile, à voir*/
@@ -65,7 +63,6 @@ int main(int argc, char **argv)
 
     echecs += test_exemple_cours();
     echecs += test_generation_affichage();
-    echecs += test_affichage_hexa();
     echecs += test_sauvegarde_chargement();
     echecs += test_boucle_paires(nb_paires);
 

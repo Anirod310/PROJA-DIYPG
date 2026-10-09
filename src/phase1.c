@@ -1,13 +1,12 @@
 #include "phase1.h"
 
 
+void printKeyHexa(rsaKey_t key, const char* keyName)
+{   
 
-void printKey(rsaKey_t key, const char* keyName){
-
-    printf("%016" PRIx64 "\n",key.E);
-    printf("%016" PRIx64 "\n",key.N);
-
-
+    printf("Nom de la clé : %s\n", keyName);
+    printf("Exposant de la clé : %016" PRIx64 "\n", key.E);
+    printf("Modulo de la clé : %016" PRIx64 "\n", key.N);
 
 }
 
@@ -15,13 +14,31 @@ int saveKeytoFile(keyPair_t keyP, const char* filename){
 
     FILE* file = fopen(filename,"wb");
     if(file==NULL){
-        printf("mauvais fich");
+        perror(file);
+        return -1;
     }
-    size_t written = fwrite(&keyP, sizeof(keyPair_t), 1, file);
-    fclose(file);
-    
-    return written == 1; 
+    if((fwrite(&keyP, sizeof(keyPair_t), 1, file))==-1){
+        perror(file);
+        fclose(file);
+        return -2;
+    }
+
+    return 1;
 }
+
+int loadKeytoprog(keyPair_t KeyP,const char* filename){
+
+    FILE* file =fopen(filename,"rb");
+        if(file==NULL){
+            perror(file);
+            return -1;
+        }
+    size_t read = fread(&KeyP, sizeof(keyPair_t), 1, file);
+    fclose(file);
+
+    return read==1;
+    }
+
 
 
 void testChiffrementOverflow(uint64_t max_prime_test) {
@@ -57,4 +74,3 @@ void testChiffrementOverflow(uint64_t max_prime_test) {
         }
     }
 }
-
