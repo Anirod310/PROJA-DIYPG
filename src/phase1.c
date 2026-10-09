@@ -177,5 +177,4 @@ int base64_vers_fichier(const char *src, const char *dst){
     fwrite(b, 1, m, fo);
     free(b);
     return fclose(fo) == 0;
->>>>>>> origin
 }
