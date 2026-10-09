@@ -4,8 +4,9 @@
 
 void printKey(rsaKey_t key, const char* keyName){
 
-    printf("%016" PRIx64 "\n",key.E);
-    printf("%016" PRIx64 "\n",key.N);
+    
+    printf("%016lx" PRIx64 "\n",key.E);
+    printf("%016lx" PRIx64 "\n",key.N);
 
 
 
@@ -22,6 +23,20 @@ int saveKeytoFile(keyPair_t keyP, const char* filename){
     
     return written == 1; 
 }
+
+int loadKeytoprog(keyPair_t KeyP,const char* filename){
+    
+    FILE* file =fopen(filename,"rb");
+        if(file==NULL){
+            perror(file);
+            return -1;
+        }
+    size_t read = fread(&KeyP, sizeof(keyPair_t), 1, file);
+    fclose(file);
+
+    return read==1;
+    }
+
 
 
 void testChiffrementOverflow(uint64_t max_prime_test) {
@@ -58,3 +73,27 @@ void testChiffrementOverflow(uint64_t max_prime_test) {
     }
 }
 
+
+
+
+int chiffrer_fichier(const char *src, const char *dst, rsaKey_t pub){
+    FILE *fi = fopen(src, "rb"); if (!fi){ perror(src); return 0; }
+    FILE *fo = fopen(dst, "wb"); if (!fo){ perror(dst); fclose(fi); return 0; }
+    int c; uint8_t buf[8];
+    while ((c = fgetc(fi)) != EOF){
+        u64_to_bytes(puissance_mod_n((uint64_t)c, pub.E, pub.N), buf);
+        fwrite(buf, 1, 8, fo);
+    }
+    fclose(fi); fclose(fo);
+    return 1;
+}
+
+int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv){
+    FILE *fi = fopen(src, "rb"); if (!fi){ perror(src); return 0; }
+    FILE *fo = fopen(dst, "wb"); if (!fo){ perror(dst); fclose(fi); return 0; }
+    uint8_t buf[8];
+    while (fread(buf, 1, 8, fi) == 8)
+        fputc((int)puissance_mod_n(bytes_to_u64(buf), priv.E, priv.N), fo);
+    fclose(fi); fclose(fo);
+    return 1;
+}

@@ -9,7 +9,8 @@
 
 void printKey(rsaKey_t key, const char* keyName);
 int saveKeytoFile(keyPair_t keyP, const char* filename);
-
+int chiffrer_fichier(const char *src, const char *dst, rsaKey_t pub);
+int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv);
 
 
 
