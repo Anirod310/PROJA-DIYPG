@@ -1,32 +1,48 @@
 /// \file phase1.c
-/// \brief phase 1 : affichage/sauvegarde des clefs, chiffrement d'octets et de fichiers, base64
+/// \author Bousseksou Dorian, Boillat Clement, Napoletano Ethan, Mokhtari Tahar 
+/// \brief phase 1 complete : fonctions 1.0, 1.1, 1.2, 1.3.
 #include "phase1.h"
 
-/* =====================================================================
- *  Phase 1.0 : affichage, sauvegarde, chargement des clefs, test de debordement
- * ===================================================================== */
 
+//Phase 1.0 :
+
+//affichage de E etn N sur 16 bits
 void printKey(rsaKey_t key, const char *keyName){
     printf("%s : E = 0x%016" PRIx64 "  N = 0x%016" PRIx64 "\n", keyName, key.E, key.N);
 }
 
+//affichage de la paire de clefs générées par genKeysRabin()
 void printKeyPair(keyPair_t kp){
     printKey(kp.pubKey,  "Cle publique");
     printKey(kp.privKey, "Cle privee  ");
 }
 
+//sauvegarder une paire de cléfs dans le fichier filename 
 int saveKeytoFile(keyPair_t keyP, const char *filename){
     FILE *f = fopen(filename, "wb");
-    if (f == NULL){ perror(filename); return 0; }
+
+    if (f == NULL){
+        perror(filename);
+        return 0;
+    }
+
     size_t w = fwrite(&keyP, sizeof keyP, 1, f);
+
     fclose(f);
-    return w == 1;                       // 1 = OK, 0 = echec
+    return w == 1;// 1 = OK, 0 = echec
 }
 
-int loadKeytoprog(keyPair_t *keyP, const char *filename){   // pointeur : la cle lue est conservee
+//charger la clef sauvegardée dans le fichier filename
+int loadKeytoprog(keyPair_t *keyP, const char *filename){// pointeur pour recup l'adresse de la clefs entres les fonctions
     FILE *f = fopen(filename, "rb");
-    if (f == NULL){ perror(filename); return 0; }
+
+    if (f == NULL){
+        perror(filename);
+        return 0;
+    }
+
     size_t r = fread(keyP, sizeof *keyP, 1, f);
+
     fclose(f);
     return r == 1;
 }
@@ -34,147 +50,301 @@ int loadKeytoprog(keyPair_t *keyP, const char *filename){   // pointeur : la cle
 /// Chiffre/dechiffre quelques octets (dont 'e acute' en UTF-8 = C3 A9) avec 3 paires de clefs.
 /// \returns le nombre d'echecs
 int testChiffrementOverflow(uint64_t max_prime_test){
-    const uint8_t msgs[] = { 'A', 0xC3, 0xA9, 0x00, 0xFF };
+    const uint64_t m = 'A';                  // le caractere A est en UTF-8 sur 1 octet
     int fails = 0;
-    printf("\n=== TEST CHIFFREMENT (MAX_PRIME = %" PRIu64 ") ===\n", max_prime_test);
-    for (int i = 1; i <= 3; i++){
+    printf("Test chiffrement ( avec MAX_PRIME = %" PRIu64 ") : \n", max_prime_test);
+    for (int i = 1; i <= 3; i++){            // on fait la boucle pour tester avec 3 paires de clefs !=
         keyPair_t kp;
+
         genKeysRabin(&kp.pubKey, &kp.privKey, max_prime_test);
         printKeyPair(kp);
-        for (size_t j = 0; j < sizeof msgs; j++){
-            uint64_t m = msgs[j];
-            uint64_t c = puissance_mod_n(m, kp.pubKey.E,  kp.pubKey.N);
-            uint64_t d = puissance_mod_n(c, kp.privKey.E, kp.privKey.N);
-            if (d != m){
-                printf("[ECHEC] M=%" PRIu64 " C=%" PRIu64 " D=%" PRIu64 "\n", m, c, d);
-                fails++;
-            }
+
+        uint64_t c = puissance_mod_n(m, kp.pubKey.E,  kp.pubKey.N);
+        uint64_t d = puissance_mod_n(c, kp.privKey.E, kp.privKey.N);
+
+        if (d != m){
+            printf("[Echec] Message initial : %" PRIu64 " Message chiffré : %" PRIu64 " Message déchifré : %" PRIu64 "\n", m, c, d);
+            fails++;
         }
     }
-    printf(fails ? "=> %d echec(s)\n" : "=> tout OK\n", fails);
+    printf(fails ? "%d echecs\n" : "Tout est OK\n", fails);
     return fails;
 }
 
-/// Pour une valeur de max_prime : sur `essais` paires de clefs, teste les 256 octets.
+/// Pour une valeur de max_prime : pour essais paires de clefs, teste les 256 octets.
 /// \returns le nombre de paires de clefs pour lesquelles au moins un octet est mal dechiffre
 int bilanOverflow(uint64_t max_prime_test, int essais){
-    int paires_ko = 0;
+    int paires_ko = 0; //init compteur
+
+    //Générer les paires de clés
     for (int t = 0; t < essais; t++){
-        keyPair_t kp;
+        keyPair_t kp; 
         genKeysRabin(&kp.pubKey, &kp.privKey, max_prime_test);
+
+        //Tester les 256 octets
         int ko = 0;
         for (uint64_t m = 0; m < 256 && !ko; m++){
+
+            //Chiffrer puis déchiffrer
             uint64_t c = puissance_mod_n(m, kp.pubKey.E,  kp.pubKey.N);
             uint64_t d = puissance_mod_n(c, kp.privKey.E, kp.privKey.N);
-            if (d != m) ko = 1;
+            if (d != m)ko = 1;   //Détecter les erreurs
         }
         paires_ko += ko;
     }
-    printf("MAX_PRIME = %12" PRIu64 " : %3d / %d paires de clefs en echec\n",
-           max_prime_test, paires_ko, essais);
+    //Affichage
+    printf("MAX_PRIME = %12" PRIu64 " : %3d / %d paires de clefs en echec\n", max_prime_test, paires_ko, essais);
     return paires_ko;
 }
 
-/* =====================================================================
- *  Phase 1.1 : chiffrement d'un tableau d'octets
- *  Choix : chaque octet clair devient un chiffre C < N, stocke sur 8 octets (little endian).
- * ===================================================================== */
 
-void u64_to_bytes(uint64_t v, uint8_t *b){
-    for (int i = 0; i < 8; i++) b[i] = (uint8_t)((v >> (8*i)) & 0xFF);
+//Phase 1.1 : chiffrement d'un tableau d'octets
+//On stocke le resultat du chiffrement sur 8 octets (little endian).
+
+
+/// découpe un nombre de 64 bits en 8 octets
+void u64_to_bytes(uint64_t v, uint8_t *b) {
+    for (int i = 0; i < 8; i++) {
+        b[i] = v % 256;// le reste = le dernier octet de v
+        v = v / 256; // on enlève ce dernier octet
+    }
 }
 
-uint64_t bytes_to_u64(const uint8_t *b){
+//recolle 8 octets en un nombre de 64 bits
+uint64_t bytes_to_u64(const uint8_t *b) {
     uint64_t v = 0;
-    for (int i = 7; i >= 0; i--) v = (v << 8) | b[i];
+    for (int i = 7; i >= 0; i--) {
+        v = v * 256 + b[i];// on décale v d'un octet et on ajoute b[i]
+    }
     return v;
 }
 
-/// \param out doit pouvoir contenir 8*len octets
-/// \returns nombre d'octets ecrits (8*len)
-size_t chiffrer_octets(const uint8_t *in, size_t len, rsaKey_t pub, uint8_t *out){
-    for (size_t i = 0; i < len; i++)
-        u64_to_bytes(puissance_mod_n(in[i], pub.E, pub.N), out + 8*i);
-    return 8 * len;
-}
+/// \returns nombre d'octets ecrits
+size_t chiffrer_octets(const uint8_t *clair, size_t nb_octets_clairs,
+                       rsaKey_t clePublique, uint8_t *chiffre){
 
-/// \param out doit pouvoir contenir len/8 octets
-/// \returns nombre d'octets clairs ecrits (len/8)
-size_t dechiffrer_octets(const uint8_t *in, size_t len, rsaKey_t priv, uint8_t *out){
-    size_t n = len / 8;
-    for (size_t i = 0; i < n; i++)
-        out[i] = (uint8_t)puissance_mod_n(bytes_to_u64(in + 8*i), priv.E, priv.N);
-    return n;
-}
+    uint64_t E = clePublique.E;      // exposant de chiffrement
+    uint64_t N = clePublique.N;      // module
 
-/* =====================================================================
- *  Phase 1.2 : fichiers
- * ===================================================================== */
-
-int chiffrer_fichier(const char *src, const char *dst, rsaKey_t pub){
-    FILE *fi = fopen(src, "rb"); if (!fi){ perror(src); return 0; }
-    FILE *fo = fopen(dst, "wb"); if (!fo){ perror(dst); fclose(fi); return 0; }
-    int c; uint8_t buf[8];
-    while ((c = fgetc(fi)) != EOF){
-        u64_to_bytes(puissance_mod_n((uint64_t)c, pub.E, pub.N), buf);
-        if (fwrite(buf, 1, 8, fo) != 8){ perror(dst); fclose(fi); fclose(fo); return 0; }
+    for (size_t i = 0; i < nb_octets_clairs; i++){
+        uint64_t M = clair[i];                         // le message de base
+        uint64_t C = puissance_mod_n(M, E, N);         // le chiffre
+        u64_to_bytes(C, &chiffre[i * 8]);              // le bloc i va occuper les cases 8i à 8i+7
     }
-    fclose(fi);
-    return fclose(fo) == 0;
+    return nb_octets_clairs * 8;                       // 8 octets chiffres pour chaque octet clair
 }
 
-int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv){
-    FILE *fi = fopen(src, "rb"); if (!fi){ perror(src); return 0; }
-    FILE *fo = fopen(dst, "wb"); if (!fo){ perror(dst); fclose(fi); return 0; }
+/// \returns nombre d'octets clairs
+size_t dechiffrer_octets(const uint8_t *chiffre, size_t nb_octets_chiffres,
+                         rsaKey_t clePrivee, uint8_t *clair){
+    uint64_t D = clePrivee.E;        // exposant de dechiffrement
+    uint64_t N = clePrivee.N;        // module
+    size_t nb_octets_clairs = nb_octets_chiffres / 8;   // 8 octets chiffres = 1 octet clair (l'inverse du dessus)
+
+    for (size_t i = 0; i < nb_octets_clairs; i++){
+        uint64_t C = bytes_to_u64(&chiffre[i * 8]);    // on relit le chiffre dans le bloc numero i
+        uint64_t M = puissance_mod_n(C, D, N);         // le message
+        clair[i] = (uint8_t)M;                         // retour a un octet
+    }
+    return nb_octets_clairs;
+}
+
+
+//Phase 1.2
+
+
+/// chiffre le fichier src et écrit le résultat dans dst
+/// renvoie 1 si tout s'est bien passé, 0 en cas d'erreur
+int chiffrer_fichier(const char *src, const char *dst, rsaKey_t pub) {
+    //ouvrir le fichier à lire
+    FILE *fi = fopen(src, "rb");
+    if (fi == NULL) {
+        perror(src);
+        return 0;
+    }
+
+    //ouvrir le fichier à écrire
+    FILE *fo = fopen(dst, "wb");
+    if (fo == NULL) {
+        perror(dst);
+        fclose(fi);// on referme celui qui était déjà ouvert
+        return 0;
+    }
+
     uint8_t buf[8];
-    while (fread(buf, 1, 8, fi) == 8)
-        fputc((int)puissance_mod_n(bytes_to_u64(buf), priv.E, priv.N), fo);
+    int c = fgetc(fi);           // lire le premier octet
+    while (c != EOF) {           // tant qu'on n'est pas à la fin du fichier
+        //chiffrer l'octet
+        uint64_t chiffre = puissance_mod_n(c, pub.E, pub.N);
+        //decoup le chiffré en 8 octets et les écrire
+        u64_to_bytes(chiffre, buf);
+        size_t nbEcrits = fwrite(buf, 1, 8, fo);
+        if (nbEcrits != 8) {     // disque plein, par exemple
+            perror(dst);
+            fclose(fi);
+            fclose(fo);
+            return 0;
+        }
+        c = fgetc(fi);// lire l'octet suivant
+    }
+
+    //fermer les deux fichiers
     fclose(fi);
-    return fclose(fo) == 0;
+    if (fclose(fo) != 0) {//test de la fermeture
+        perror(dst);
+        return 0;
+    }
+    return 1;
 }
 
-/* =====================================================================
- *  Phase 1.3 : fichier <-> base64
- * ===================================================================== */
 
-static unsigned char *lire_tout(const char *nom, size_t *len){
-    FILE *f = fopen(nom, "rb"); if (!f){ perror(nom); return NULL; }
-    fseek(f, 0, SEEK_END);
-    long t = ftell(f);
-    rewind(f);
-    if (t < 0){ fclose(f); return NULL; }
-    unsigned char *buf = malloc(t > 0 ? (size_t)t : 1);
-    if (!buf){ fclose(f); return NULL; }
-    *len = fread(buf, 1, (size_t)t, f);
+/// déchiffre le fichier src et écrit le résultat dans dst
+/// renvoie 1 si tout s'est bien passé, 0 en cas d'erreur
+int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv) {
+    FILE *fi = fopen(src, "rb");
+    if (fi == NULL) {
+        perror(src);
+        return 0;
+    }
+    FILE *fo = fopen(dst, "wb");
+    if (fo == NULL) {
+        perror(dst);
+        fclose(fi);
+        return 0;
+    }
+
+    uint8_t buf[8];
+    size_t nbLus = fread(buf, 1, 8, fi);   // lire le premier bloc
+    while (nbLus == 8) {                   // tant qu'on a pu lire un bloc complet
+        //recoller les 8 octets en un nombre
+        uint64_t chiffre = bytes_to_u64(buf);
+        //déchiffrer
+        uint64_t clair = puissance_mod_n(chiffre, priv.E, priv.N);
+        //clair < 256 alors il tient dans un octet, on l'écrit
+        fputc(clair, fo);
+        nbLus = fread(buf, 1, 8, fi);      // lire le bloc suivant
+    }
+
+    fclose(fi);
+    if (fclose(fo) != 0) {
+        perror(dst);
+        return 0;
+    }
+    return 1;
+}
+
+
+//Phase 1.3
+
+/// Permet de recuperer la taille et le contenu du fichier pour les fonctions d'après (fichier_vers_base64 et base64_vers_fichier)
+/// \returns buffer avec le contenu lu
+static unsigned char* lire_tout(const char *nom, size_t *len){
+    //Ouvrir le fichier
+    FILE *f = fopen(nom, "rb");
+    if (!f) {
+        perror(nom);
+        return NULL;
+    }
+    fseek(f, 0, SEEK_END);   //place le curseur à la fin du fichier
+    long taille = ftell(f);   //taille du fichier en octets
+    rewind(f);      //replace le curseur au début du fichier
+
+//Vérifier la taille
+    if (taille< 0) {
+        fclose(f);
+        return NULL;
+    }
+
+    unsigned char *buf = malloc(taille > 0 ? (size_t)taille : 1);   //Réserver de la mémoire
+
+    if (!buf) {
+        fclose(f);
+        return NULL;
+    }
+
+//Lire le contenu
+    *len = fread(buf, 1, (size_t)taille, f);
     fclose(f);
+
     return buf;
 }
 
-int fichier_vers_base64(const char *src, const char *dst){
-    size_t n, m;
-    unsigned char *d = lire_tout(src, &n);
-    if (!d) return 0;
-    char *e = base64_encode(d, n, &m);
-    free(d);
-    if (!e) return 0;
-    FILE *fo = fopen(dst, "w");
-    if (!fo){ perror(dst); free(e); return 0; }
-    fwrite(e, 1, m, fo);
-    free(e);
-    return fclose(fo) == 0;
+/// convertit un fichier binaire (src) en un fichier texte base64 (dst)
+/// renvoie 1 si tout s'est bien passé, 0 en cas d'erreur
+int fichier_vers_base64(const char *src, const char *dst) {
+    // 1. lire tout le fichier binaire en mémoire
+    size_t lgBinaire;
+    unsigned char *binaire = lire_tout(src, &lgBinaire);
+    if (binaire == NULL) {
+        return 0;
+    }
+
+    // 2. encoder en base64
+    size_t lgTexte;
+    char *texte = base64_encode(binaire, lgBinaire, &lgTexte);
+    free(binaire);              
+    if (texte == NULL) {
+        return 0;
+    }
+
+    // 3. écrire le texte dans le fichier de sortie
+    FILE *fo = fopen(dst, "w"); 
+    if (fo == NULL) {
+        perror(dst);
+        free(texte);
+        return 0;
+    }
+    fwrite(texte, 1, lgTexte, fo);
+    free(texte);
+
+    if (fclose(fo) != 0) {
+        perror(dst);
+        return 0;
+    }
+    return 1;
 }
 
-int base64_vers_fichier(const char *src, const char *dst){
-    size_t n, m;
-    unsigned char *d = lire_tout(src, &n);
-    if (!d) return 0;
-    while (n > 0 && (d[n-1] == '\n' || d[n-1] == '\r')) n--;   // retire les fins de ligne
-    unsigned char *b = base64_decode((char *)d, n, &m);
-    free(d);
-    if (!b) return 0;
-    FILE *fo = fopen(dst, "wb");
-    if (!fo){ perror(dst); free(b); return 0; }
-    fwrite(b, 1, m, fo);
-    free(b);
-    return fclose(fo) == 0;
+/// convertit un fichier texte base64 src en fichier binaire dst
+/// renvoie 1 si tout s'est bien passé, 0 en cas d'erreur
+int base64_vers_fichier(const char *src, const char *dst) {
+    // 1. lire tout le fichier texte en mémoire
+    size_t lgTexte;
+    unsigned char *texte = lire_tout(src, &lgTexte);
+    if (texte == NULL) {
+        return 0;
+    }
+
+    // 2. enlever les retours à la ligne à la fin au cas ou
+    while (lgTexte > 0) {
+        unsigned char dernier = texte[lgTexte - 1];
+        if (dernier == '\n' || dernier == '\r') {
+            lgTexte = lgTexte - 1;  // on raccourcit d'un caractère pour l'enlever
+        } else {
+            break;             
+        }
+    }
+
+    // 3. décoder
+    size_t lgBinaire;
+    unsigned char *binaire = base64_decode((char *)texte, lgTexte, &lgBinaire);
+    free(texte);
+    if (binaire == NULL) { // texte invalide
+        return 0;
+    }
+
+    // 4. écrire les octets dans le fichier de sortie
+    FILE *fo = fopen(dst, "wb"); 
+    if (fo == NULL) {
+        perror(dst);
+        free(binaire);
+        return 0;
+    }
+    fwrite(binaire, 1, lgBinaire, fo);
+    free(binaire);
+
+    if (fclose(fo) != 0) {
+        perror(dst);
+        return 0;
+    }
+    return 1;
 }
