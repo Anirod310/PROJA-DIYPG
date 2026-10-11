@@ -35,7 +35,7 @@ int main(int argc, char **argv){
     //générer et afficher une paire de clés
     if (!strcmp(cmd, "demo")){
         uint64_t maxp = (argc > 2) ? strtoull(argv[2], NULL, 10) : MAX_PRIME;  //stroull -> convertit une chaîne en entier non signé de type unsigned long long
-        genKeysRabin(&kp.pubKey, &kp.privKey, maxp);
+        genKeysSures(&kp.pubKey, &kp.privKey, maxp);
         printKeyPair(kp);
         testChiffrementOverflow(maxp);
     }
@@ -59,7 +59,7 @@ int main(int argc, char **argv){
     //générer et sauvegarder les clés
     else if (!strcmp(cmd, "genkey") && argc >= 3){
         uint64_t maxp = (argc > 3) ? strtoull(argv[3], NULL, 10) : MAX_PRIME;
-        genKeysRabin(&kp.pubKey, &kp.privKey, maxp);
+        genKeysSures(&kp.pubKey, &kp.privKey, maxp);
         printKeyPair(kp);
         ret = !saveKeytoFile(kp, argv[2]);
     }

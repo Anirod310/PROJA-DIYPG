@@ -7,7 +7,7 @@
 //Phase 1.0 :
 
 /// genere un nombre premier < max_prime
-/// le code fourni dans genereUintRabin renvoie parfois un nombre non premier (faux positif du test ou >= max_prime : on verifie donc le
+/// le code fourni dans genereUintRabin renvoie parfois un nombre pas premier (faux positif du test ou >= max_prime : on verifie donc le
 /// resultat avec et on recommence tant qu'il n'est pas bon
 static uint64_t generePremierSur(uint64_t max_prime){
     int cpt;
@@ -88,7 +88,7 @@ int loadKeytoprog(keyPair_t *keyP, const char *filename){// pointeur pour recup 
     return r == 1;
 }
 
-/// Chiffre/dechiffre quelques octets (dont 'e acute' en UTF-8 = C3 A9) avec 3 paires de clefs.
+///Chiffre/dechiffre le caractere 'A' (1 octet en UTF-8) avec 3 paires de clefs.
 /// \returns le nombre d'echecs
 int testChiffrementOverflow(uint64_t max_prime_test){
     const uint64_t m = 'A';                  // le caractere A est en UTF-8 sur 1 octet
@@ -281,8 +281,6 @@ int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv) {
         return 0;
     }
     return 1;
-
-    return 1;
 }
 
 
@@ -324,14 +322,14 @@ static unsigned char* lire_tout(const char *nom, size_t *len){
 /// convertit un fichier binaire (src) en un fichier texte base64 (dst)
 /// renvoie 1 si tout s'est bien passé, 0 en cas d'erreur
 int fichier_vers_base64(const char *src, const char *dst) {
-    // 1. lire tout le fichier binaire en mémoire
+    //lire tout le fichier binaire en mémoire
     size_t lgBinaire;
     unsigned char *binaire = lire_tout(src, &lgBinaire);
     if (binaire == NULL) {
         return 0;
     }
 
-    // 2. encoder en base64
+    //encoder en base64
     size_t lgTexte;
     char *texte = base64_encode(binaire, lgBinaire, &lgTexte);
     free(binaire);              
@@ -339,7 +337,7 @@ int fichier_vers_base64(const char *src, const char *dst) {
         return 0;
     }
 
-    // 3. écrire le texte dans le fichier de sortie
+    //écrire le texte dans le fichier de sortie
     FILE *fo = fopen(dst, "w"); 
     if (fo == NULL) {
         perror(dst);
@@ -359,14 +357,14 @@ int fichier_vers_base64(const char *src, const char *dst) {
 /// convertit un fichier texte base64 src en fichier binaire dst
 /// renvoie 1 si tout s'est bien passé, 0 en cas d'erreur
 int base64_vers_fichier(const char *src, const char *dst) {
-    // 1. lire tout le fichier texte en mémoire
+    //lire tout le fichier texte en mémoire
     size_t lgTexte;
     unsigned char *texte = lire_tout(src, &lgTexte);
     if (texte == NULL) {
         return 0;
     }
 
-    // 2. enlever les retours à la ligne à la fin au cas ou
+    //enlever les retours à la ligne à la fin au cas ou
     while (lgTexte > 0) {
         unsigned char dernier = texte[lgTexte - 1];
         if (dernier == '\n' || dernier == '\r') {
@@ -376,7 +374,7 @@ int base64_vers_fichier(const char *src, const char *dst) {
         }
     }
 
-    // 3. décoder
+    //décoder
     size_t lgBinaire;
     unsigned char *binaire = base64_decode((char *)texte, lgTexte, &lgBinaire);
     free(texte);
@@ -384,7 +382,7 @@ int base64_vers_fichier(const char *src, const char *dst) {
         return 0;
     }
 
-    // 4. écrire les octets dans le fichier de sortie
+    //écrire les octets dans le fichier de sortie
     FILE *fo = fopen(dst, "wb"); 
     if (fo == NULL) {
         perror(dst);

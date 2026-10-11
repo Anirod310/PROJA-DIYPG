@@ -26,6 +26,20 @@ static void lire_texte(const char *fichier, char *buf, size_t n){
     buf[lu] = '\0';
 }
 
+// AJOUT : compare deux fichiers octet par octet (1 si identiques) pour tester les fichiers binaires
+static int fichiers_identiques(const char *a, const char *b){
+    FILE *fa = fopen(a, "rb"), *fb = fopen(b, "rb");
+    int ok = (fa != NULL && fb != NULL);
+    while (ok){
+        int ca = fgetc(fa), cb = fgetc(fb);
+        if (ca != cb) ok = 0;
+        if (ca == EOF || cb == EOF) break;
+    }
+    if (fa) fclose(fa);
+    if (fb) fclose(fb);
+    return ok;
+}
+
 // Test des fonctions de maths pour comprendre comment elles fonctionnent/ les valider
 static void test_maths(void){
     printf("\ntest des fonctions maths fournies : \n");
@@ -149,6 +163,40 @@ static void test_base64(void){
     remove("t_b64_src.txt");
     remove("t_b64.b64");
     remove("t_b64_dst.txt");
+
+    // AJOUT (phase 1.3) : uint64 -> 8 octets -> base64 -> 8 octets -> uint64
+    uint64_t grand = 0x0123456789ABCDEFULL;
+    uint8_t o8[8];
+    u64_to_bytes(grand, o8);
+    e = base64_encode(o8, 8, &taille);
+    d = base64_decode(e, taille, &taille);
+    verifier(d != NULL && taille == 8 && bytes_to_u64(d) == grand, "uint64 -> base64 -> uint64");
+    free(e);
+    free(d);
+
+    // AJOUT : une paire de clefs -> base64 -> paire de clefs
+    keyPair_t kp, kp2;
+    genKeysSures(&kp.pubKey, &kp.privKey, max_prime_tests);
+    e = base64_encode((const unsigned char *)&kp, sizeof kp, &taille);
+    d = base64_decode(e, taille, &taille);
+    int cles_ok = (d != NULL && taille == sizeof kp);
+    if (cles_ok){
+        memcpy(&kp2, d, sizeof kp2);
+        cles_ok = kp.pubKey.E == kp2.pubKey.E && kp.pubKey.N == kp2.pubKey.N
+               && kp.privKey.E == kp2.privKey.E && kp.privKey.N == kp2.privKey.N;
+    }
+    verifier(cles_ok, "clefs -> base64 -> clefs");
+    free(e);
+    free(d);
+
+    // AJOUT : fichier binaire contenant les 256 octets
+    FILE *fb = fopen("t_b64_bin.bin", "wb");
+    for (int i = 0; i < 256; i++) fputc(i, fb);
+    fclose(fb);
+    fichier_vers_base64("t_b64_bin.bin", "t_b64_bin.b64");
+    base64_vers_fichier("t_b64_bin.b64", "t_b64_bin.out");
+    verifier(fichiers_identiques("t_b64_bin.bin", "t_b64_bin.out"), "fichier binaire -> base64 -> fichier binaire identique");
+    remove("t_b64_bin.bin"); remove("t_b64_bin.b64"); remove("t_b64_bin.out");
 }
 
 // Lancement de tout les tests 
