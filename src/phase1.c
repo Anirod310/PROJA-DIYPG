@@ -6,6 +6,47 @@
 
 //Phase 1.0 :
 
+/// genere un nombre premier < max_prime
+/// le code fourni dans genereUintRabin renvoie parfois un nombre non premier (faux positif du test ou >= max_prime : on verifie donc le
+/// resultat avec et on recommence tant qu'il n'est pas bon
+static uint64_t generePremierSur(uint64_t max_prime){
+    int cpt;
+    uint64_t p = genereUintRabin(max_prime, &cpt);
+    while (p >= max_prime || premier(p) == 0){
+        p = genereUintRabin(max_prime, &cpt);
+    }
+    return p;
+}
+
+/// genere une paire de clefs RSA, comme le code fourni mais :
+///  - p et q sont verifies et si q == p, on retire q au lieu d'arreter le programme avec assert(num1 != num2)
+void genKeysSures(rsaKey_t *pubKey, rsaKey_t *privKey, uint64_t max_prime){
+    //deux nombres premiers differents
+    uint64_t p = generePremierSur(max_prime);
+    uint64_t q = generePremierSur(max_prime);
+    while (q == p){
+        q = generePremierSur(max_prime);
+    }
+
+    uint64_t N = p * q;
+    uint64_t M = (p - 1) * (q - 1);
+
+    //exposant public C
+    uint64_t C = 2;
+    while (pgcdFast(C, M) != 1){
+        C++;
+    }
+
+    //exposant prive U
+    int64_t U, V;
+    bezoutRSA(C, M, &U, &V);
+
+    pubKey->E = C;
+    pubKey->N = N;
+    privKey->E = U;
+    privKey->N = N;
+}
+
 //affichage de E etn N sur 16 bits
 void printKey(rsaKey_t key, const char *keyName){
     printf("%s : E = 0x%016" PRIx64 "  N = 0x%016" PRIx64 "\n", keyName, key.E, key.N);
@@ -56,7 +97,7 @@ int testChiffrementOverflow(uint64_t max_prime_test){
     for (int i = 1; i <= 3; i++){            // on fait la boucle pour tester avec 3 paires de clefs !=
         keyPair_t kp;
 
-        genKeysRabin(&kp.pubKey, &kp.privKey, max_prime_test);
+        genKeysSures(&kp.pubKey, &kp.privKey, max_prime_test);
         printKeyPair(kp);
 
         uint64_t c = puissance_mod_n(m, kp.pubKey.E,  kp.pubKey.N);
@@ -79,7 +120,7 @@ int bilanOverflow(uint64_t max_prime_test, int essais){
     //Générer les paires de clés
     for (int t = 0; t < essais; t++){
         keyPair_t kp; 
-        genKeysRabin(&kp.pubKey, &kp.privKey, max_prime_test);
+        genKeysSures(&kp.pubKey, &kp.privKey, max_prime_test);
 
         //Tester les 256 octets
         int ko = 0;
@@ -134,9 +175,12 @@ size_t chiffrer_octets(const uint8_t *clair, size_t nb_octets_clairs,
     return nb_octets_clairs * 8;                       // 8 octets chiffres pour chaque octet clair
 }
 
-/// \returns nombre d'octets clairs
+/// \returns nombre d'octets clairs ou 0 si c pas un mulktiplie de 8
 size_t dechiffrer_octets(const uint8_t *chiffre, size_t nb_octets_chiffres,
                          rsaKey_t clePrivee, uint8_t *clair){
+    if (nb_octets_chiffres % 8 != 0){                   // un chiffre valide fait toujours un multiple de 8 octets
+        return 0;
+    }
     uint64_t D = clePrivee.E;        // exposant de dechiffrement
     uint64_t N = clePrivee.N;        // module
     size_t nb_octets_clairs = nb_octets_chiffres / 8;   // 8 octets chiffres = 1 octet clair (l'inverse du dessus)
@@ -230,6 +274,14 @@ int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv) {
         perror(dst);
         return 0;
     }
+
+    // s'il reste un bloc incomplet, le fichier chiffre est tronque ou abime donc on le précise
+    if (nbLus != 0) {
+        fprintf(stderr, "%s : fichier tronque (taille non multiple de 8)\n", src);
+        return 0;
+    }
+    return 1;
+
     return 1;
 }
 
