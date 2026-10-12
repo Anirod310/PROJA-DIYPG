@@ -36,14 +36,22 @@ void           base64_cleanup(void);
 
 /* ---------- phase1.c : phases 1.0 a 1.3 ---------- */
 void genKeysSures(rsaKey_t *pubKey, rsaKey_t *privKey, uint64_t max_prime);
+// genere les clés
 void printKey(rsaKey_t key, const char *keyName);
+//fonction de print un clé
 void printKeyPair(keyPair_t kp);
+// appele la fonction de printkey pour une paire de clé
 int  saveKeytoFile(keyPair_t keyP, const char *filename);
+//permet d'enregistrer une clé dans un fich
 int  loadKeytoprog(keyPair_t *keyP, const char *filename);
+// permet de load des clés depuis un fich
 int  testChiffrementOverflow(uint64_t max_prime_test);
+// permet de tester le chiffrement , aurai pu etre dans le main de test
 int  bilanOverflow(uint64_t max_prime_test, int essais);
+// bilan des overflow 
 
 void     u64_to_bytes(uint64_t v, uint8_t *b);
+
 uint64_t bytes_to_u64(const uint8_t *b);
 size_t   chiffrer_octets(const uint8_t *in, size_t len, rsaKey_t pub, uint8_t *out);
 size_t   dechiffrer_octets(const uint8_t *in, size_t len, rsaKey_t priv, uint8_t *out);
