@@ -24,7 +24,7 @@ LDLIBS   =
 BUILD = build
 BIN   = bin
 
-# --- sources ----------------------------------------------------------------
+# --- sources ---
 # src/*.c uniquement (pas src/Sha256/ : doublon des fichiers sha256 de src/)
 SHA_SRC  = src/sha256.c src/sha256_utils.c
 # ctrl_c.c a son propre main() : jamais lie avec le reste
@@ -45,7 +45,7 @@ DEPS = $(PHASE1_OBJ:.o=.d) $(SHA_TEST_OBJ:.o=.d) $(CTRL_C_OBJ:.o=.d)
 
 all: $(BIN)/phase1
 
-# --- executables --------------------------------------------------------------
+# --- executables ---
 $(BIN)/phase1: $(PHASE1_OBJ)
 	@mkdir -p $(@D)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
@@ -58,12 +58,12 @@ $(BIN)/ctrl_c: $(CTRL_C_OBJ)
 	@mkdir -p $(@D)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-# --- compilation d'un .c -> .o (build/ reproduit l'arborescence) --------------
+# --- compilation d'un .c -> .o (build/ reproduit l'arborescence) ---
 $(BUILD)/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# --- raccourcis ---------------------------------------------------------------
+# --- raccourcis ---
 test: $(BIN)/phase1
 	./$(BIN)/phase1 tests
 
