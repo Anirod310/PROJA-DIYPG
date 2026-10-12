@@ -2,7 +2,7 @@
 
 Projet de l'UE « Projet Avancé » . Le but : recréer, en version simplifiée, un outil de chiffrement comme GPG, basé sur l'algorithme **RSA**.
 
-**Équipe :** Dorian Bousseksou, Clément Boillat, Ethan Napoletano, Tahar Mokhtari
+**Équipe 7 :** Dorian Bousseksou (22108340), Clément Boillat (22103053), Ethan Napoletano (22204019), Tahar Mokhtari (22209563)
 
 ---
 
