@@ -1,4 +1,4 @@
-# =============================================================================
+
 #  DIYPG - Makefile
 #
 #  Cibles :
@@ -8,7 +8,7 @@
 #    make sha_test   compile et lance test/test_sha.c (SHA-256)
 #    make ctrl_c     compile la demo de gestion de Ctrl-C (phase 3)
 #    make clean      supprime build/, bin/ et les fichiers de test
-# =============================================================================
+
 
 CC       = gcc
 CFLAGS   = -Wall -Wextra -g -O0
@@ -34,6 +34,11 @@ PHASE1_OBJ   = $(call obj,$(PHASE1_SRC))
 SHA_TEST_OBJ = $(call obj,$(SHA_TEST_SRC))
 CTRL_C_OBJ   = $(call obj,src/ctrl_c.c)
 DEPS = $(PHASE1_OBJ:.o=.d) $(SHA_TEST_OBJ:.o=.d) $(CTRL_C_OBJ:.o=.d)
+
+# On masque uniquement leurs warnings (format %llu, comparaisons signe, char en indice) :
+# les warnings de nos fichiers (phase1.c, main.c, tests.c...) restent affiches.
+PROVIDED_OBJ = $(call obj,src/rsa_tools.c src/bezout.c src/other_base64.c)
+$(PROVIDED_OBJ): CFLAGS += -Wno-format -Wno-sign-compare -Wno-char-subscripts
 
 .PHONY: all test overflow sha_test ctrl_c clean help
 .DEFAULT_GOAL := all
@@ -74,7 +79,7 @@ clean:
 	rm -rf $(BUILD) $(BIN) log.txt test_keys.bin
 
 help:
-	@sed -n '4,16p' Makefile
+	@sed -n '4,10p' Makefile
 
 # dependances automatiques (modifier un .h recompile les .c concernes)
 -include $(DEPS)

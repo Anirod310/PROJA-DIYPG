@@ -3,7 +3,7 @@
 /// Usage : ./phase1 demo [max]          genere et affiche une paire de clefs
 ///         ./phase1 tests [max]         lance tous les tests
 ///         ./phase1 overflow [essais]   bilan du depassement de capacite en fonction de MAX_PRIME
-///         ./phase1 b64enc|b64dec|enc|dec ...   voir l'aide
+///         ./phase1 b64enc|b64dec|enc|dec 
 
 #include "phase1.h"
 
