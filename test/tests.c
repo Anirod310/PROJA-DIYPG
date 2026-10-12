@@ -1,23 +1,24 @@
 /// \file tests.c
-/// \brief tests simples de la phase 1 : un test = une verification affichee [OK] ou [KO]
+/// \brief tests simples de la phase 1 : un test = une verification affichee (soit [OK] soit [KO] ) 
 #include "phase1.h"
 
 static int nb_ko = 0;
+static uint64_t max_prime_tests = MAX_PRIME;   // 10000 par défaut
 
-// affiche le resultat d'un test
+// affiche le resultat d'un test : on l'utilise dans tout les tests comme base 
 static void verifier(int condition, const char *nom){
     if (condition) printf("[OK] %s\n", nom);
     else { printf("[KO] %s\n", nom); nb_ko++; }
 }
 
-// ecrit un petit texte dans un fichier
+// ecrit un petit texte dans un fichier, utile pour les tests de test_fichiers et test_base64 ( juste pour séparer le job quoi )
 static void ecrire_texte(const char *fichier, const char *texte){
     FILE *f = fopen(fichier, "wb");
     fwrite(texte, 1, strlen(texte), f);
     fclose(f);
 }
 
-// lit un fichier dans buf (taille max n-1) et le termine par \0
+// lit un fichier dans buf et le termine par \0 pareil utilse pour les tests test_fichiers test_base64
 static void lire_texte(const char *fichier, char *buf, size_t n){
     FILE *f = fopen(fichier, "rb");
     size_t lu = 0;
@@ -25,13 +26,24 @@ static void lire_texte(const char *fichier, char *buf, size_t n){
     buf[lu] = '\0';
 }
 
-/* ---------- maths ---------- */
+// AJOUT : compare deux fichiers octet par octet (1 si identiques) pour tester les fichiers binaires
+static int fichiers_identiques(const char *a, const char *b){
+    FILE *fa = fopen(a, "rb"), *fb = fopen(b, "rb");
+    int ok = (fa != NULL && fb != NULL);
+    while (ok){
+        int ca = fgetc(fa), cb = fgetc(fb);
+        if (ca != cb) ok = 0;
+        if (ca == EOF || cb == EOF) break;
+    }
+    if (fa) fclose(fa);
+    if (fb) fclose(fb);
+    return ok;
+}
+
+// Test des fonctions de maths pour comprendre comment elles fonctionnent/ les valider
 static void test_maths(void){
-    printf("\n--- maths ---\n");
-    verifier(premier(7) == 1,  "7 est premier");
-    verifier(premier(8) == 0,  "8 n'est pas premier");
-    verifier(premier(1) == 0,  "1 n'est pas premier");
-    verifier(pgcdFast(12, 18) == 6, "pgcd(12,18) = 6");
+    printf("\ntest des fonctions maths fournies : \n");
+
     verifier(puissance_mod_n(4, 3, 33) == 31, "4^3 mod 33 = 31 (exemple du sujet)");
     verifier(puissance_mod_n(31, 7, 33) == 4, "31^7 mod 33 = 4 (exemple du sujet)");
 
@@ -41,11 +53,11 @@ static void test_maths(void){
     verifier(240 * u + 46 * v == 2, "bezout(240,46) : 240*u + 46*v = 2");
 }
 
-/* ---------- clefs ---------- */
+// Test des clefs, Respectivement qu'elles aient le meme N, que la sauvegarde et le chargement fonctionnent et que l'intégrité de la clefs est conservée
 static void test_cles(void){
-    printf("\n--- clefs ---\n");
+    printf("\nTest des clefs : \n");
     keyPair_t kp, kp2;
-    genKeysRabin(&kp.pubKey, &kp.privKey, MAX_PRIME);
+    genKeysSures(&kp.pubKey, &kp.privKey, max_prime_tests);
 
     verifier(kp.pubKey.N == kp.privKey.N, "les deux clefs ont le meme N");
     verifier(saveKeytoFile(kp, "test_keys.bin") == 1, "sauvegarde des clefs");
@@ -56,11 +68,11 @@ static void test_cles(void){
     remove("test_keys.bin");
 }
 
-/* ---------- chiffrement d'octets ---------- */
+// Test du chiffrement d'octets 
 static void test_octets(void){
-    printf("\n--- chiffrement d'octets ---\n");
+    printf("\nchiffrement d'octets : \n");
     keyPair_t kp;
-    genKeysRabin(&kp.pubKey, &kp.privKey, MAX_PRIME);
+    genKeysSures(&kp.pubKey, &kp.privKey, max_prime_tests);
 
     // un seul caractere
     uint8_t clair1[1] = { 'A' };
@@ -85,11 +97,11 @@ static void test_octets(void){
              "le chiffre fait 8 octets par octet clair");
 }
 
-/* ---------- fichiers ---------- */
+// test de la gestion des fichiers
 static void test_fichiers(void){
-    printf("\n--- fichiers ---\n");
+    printf("\nGestion des fichiers : \n");
     keyPair_t kp;
-    genKeysRabin(&kp.pubKey, &kp.privKey, MAX_PRIME);
+    genKeysSures(&kp.pubKey, &kp.privKey, max_prime_tests);
 
     const char *texte = "Ceci est un test de fichier.";
     char relu[100];
@@ -106,18 +118,20 @@ static void test_fichiers(void){
     remove("t_dechiffre.txt");
 }
 
-/* ---------- base64 ---------- */
+// Test l'encodage et du decodage en base 64 
 static void test_base64(void){
     printf("\n--- base64 ---\n");
     size_t taille;
 
     // encodage
+    // base64_encode (code fourni) ne termine pas sa chaine par '\0' : on ne peut pas utiliser
+    // strcmp, on compare la taille puis les caracteres avec memcmp
     char *e = base64_encode((const unsigned char *)"Hi!", 3, &taille);
-    verifier(e != NULL && strcmp(e, "SGkh") == 0, "\"Hi!\" -> \"SGkh\"");
+    verifier(e != NULL && taille == 4 && memcmp(e, "SGkh", 4) == 0, "\"Hi!\" -> \"SGkh\"");
     free(e);
 
     e = base64_encode((const unsigned char *)"f", 1, &taille);
-    verifier(e != NULL && strcmp(e, "Zg==") == 0, "\"f\" -> \"Zg==\" (avec padding)");
+    verifier(e != NULL && taille == 4 && memcmp(e, "Zg==", 4) == 0, "\"f\" -> \"Zg==\" (avec padding)");
     free(e);
 
     // decodage
@@ -149,19 +163,52 @@ static void test_base64(void){
     remove("t_b64_src.txt");
     remove("t_b64.b64");
     remove("t_b64_dst.txt");
-    base64_cleanup();
+
+    // AJOUT (phase 1.3) : uint64 -> 8 octets -> base64 -> 8 octets -> uint64
+    uint64_t grand = 0x0123456789ABCDEFULL;
+    uint8_t o8[8];
+    u64_to_bytes(grand, o8);
+    e = base64_encode(o8, 8, &taille);
+    d = base64_decode(e, taille, &taille);
+    verifier(d != NULL && taille == 8 && bytes_to_u64(d) == grand, "uint64 -> base64 -> uint64");
+    free(e);
+    free(d);
+
+    // AJOUT : une paire de clefs -> base64 -> paire de clefs
+    keyPair_t kp, kp2;
+    genKeysSures(&kp.pubKey, &kp.privKey, max_prime_tests);
+    e = base64_encode((const unsigned char *)&kp, sizeof kp, &taille);
+    d = base64_decode(e, taille, &taille);
+    int cles_ok = (d != NULL && taille == sizeof kp);
+    if (cles_ok){
+        memcpy(&kp2, d, sizeof kp2);
+        cles_ok = kp.pubKey.E == kp2.pubKey.E && kp.pubKey.N == kp2.pubKey.N
+               && kp.privKey.E == kp2.privKey.E && kp.privKey.N == kp2.privKey.N;
+    }
+    verifier(cles_ok, "clefs -> base64 -> clefs");
+    free(e);
+    free(d);
+
+    // AJOUT : fichier binaire contenant les 256 octets
+    FILE *fb = fopen("t_b64_bin.bin", "wb");
+    for (int i = 0; i < 256; i++) fputc(i, fb);
+    fclose(fb);
+    fichier_vers_base64("t_b64_bin.bin", "t_b64_bin.b64");
+    base64_vers_fichier("t_b64_bin.b64", "t_b64_bin.out");
+    verifier(fichiers_identiques("t_b64_bin.bin", "t_b64_bin.out"), "fichier binaire -> base64 -> fichier binaire identique");
+    remove("t_b64_bin.bin"); remove("t_b64_bin.b64"); remove("t_b64_bin.out");
 }
 
-/* ---------- lancement ---------- */
+// Lancement de tout les tests 
 int lancer_tous_les_tests(uint64_t max_prime){
-    (void)max_prime;   // les tests utilisent MAX_PRIME du header
+    max_prime_tests = max_prime;  // les tests utilisent le MAX_PRIME du header de base si pas spécifié par l'utilisateur
     nb_ko = 0;
-    printf("===== TESTS PHASE 1 =====\n");
+    printf("TESTS PHASE 1\n");
     test_maths();
     test_cles();
     test_octets();
     test_fichiers();
     test_base64();
-    printf("\n===== %s (%d test(s) en echec) =====\n", nb_ko == 0 ? "TOUT EST OK" : "ECHEC", nb_ko);
+    printf("\n%s (%d test(s) en echec)\n", nb_ko == 0 ? "TOUT EST OK" : "ECHEC", nb_ko); // Print final des tests !
     return nb_ko;
 }

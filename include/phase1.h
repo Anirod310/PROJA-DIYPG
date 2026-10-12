@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-#ifndef PHASE_1
-#define PHASE_1
-
-
-#include "rsa_common_header.h"
-#include <inttypes.h>
-
-
-
-void printKey(rsaKey_t key, const char* keyName);
-int saveKeytoFile(keyPair_t keyP, const char* filename);
-int chiffrer_fichier(const char *src, const char *dst, rsaKey_t pub);
-int dechiffrer_fichier(const char *src, const char *dst, rsaKey_t priv);
-
-
-
-
-#endif
-=======
 /// \file phase1.h
 /// \brief prototypes de la phase 1 (outils RSA, chiffrement octets/fichiers, base64)
 #ifndef PHASE1_H
@@ -32,11 +12,9 @@ uint64_t random_uint(uint64_t min, uint64_t max);
 int      premier(uint64_t n);
 int      decompose(uint64_t facteur[], uint64_t n);
 uint64_t puissance(uint64_t a, uint64_t e);
-uint64_t puissance_mod_n(uint64_t a, uint64_t e, uint64_t n);      // version uint64 (deborde si n > 2^32)
-uint64_t puissance_mod_n_sure(uint64_t a, uint64_t e, uint64_t n); // version __int128 (reference)
+uint64_t puissance_mod_n(uint64_t a, uint64_t e, uint64_t n); 
 uint64_t genereUint(uint64_t max, int *cpt);
 int      rabin(uint64_t a, uint64_t n);
-int      rabin_multi(uint64_t n);
 int64_t  genereUintRabin(uint64_t max, int *cpt);
 uint64_t pgcdFast(uint64_t a, uint64_t b);
 void     genKeysRabin(rsaKey_t *pubKey, rsaKey_t *privKey, uint64_t max_prime);
@@ -57,6 +35,7 @@ unsigned char *base64_decode(const char *data, size_t input_length, size_t *outp
 void           base64_cleanup(void);
 
 /* ---------- phase1.c : phases 1.0 a 1.3 ---------- */
+void genKeysSures(rsaKey_t *pubKey, rsaKey_t *privKey, uint64_t max_prime);
 void printKey(rsaKey_t key, const char *keyName);
 void printKeyPair(keyPair_t kp);
 int  saveKeytoFile(keyPair_t keyP, const char *filename);
@@ -79,4 +58,3 @@ int base64_vers_fichier(const char *src, const char *dst);
 int lancer_tous_les_tests(uint64_t max_prime);
 
 #endif
->>>>>>> origin
