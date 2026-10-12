@@ -1,11 +1,6 @@
 # =============================================================================
 #  DIYPG - Makefile
 #
-#  Arborescence attendue :
-#    include/   en-tetes (.h)              src/    sources du projet (.c)
-#    test/      main.c, tests.c, test_sha.c
-#    build/     fichiers objets (genere)   bin/    executables (genere)
-#
 #  Cibles :
 #    make            compile bin/phase1
 #    make test       compile puis lance les tests de la phase 1
