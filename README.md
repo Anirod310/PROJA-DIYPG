@@ -46,9 +46,9 @@ La phase 1 permet de :
 | **Chiffré** | Le message après chiffrement, illisible sans la clef. |
 | **Clef publique** | Sert à chiffrer. On peut la donner à n'importe qui. |
 | **Clef privée** | Sert à déchiffrer. Elle reste secrète. |
-| **N** | Un grand nombre, produit de deux nombres premiers p et q. Il fait partie des deux clefs. |
-| **Octet** | Une petite case mémoire qui contient un nombre de 0 à 255. Une lettre = un octet (ou plusieurs pour les accents). |
-| **Base64** | Une façon d'écrire des données quelconques avec des lettres et des chiffres seulement, pour les copier ou les envoyer par mail. |
+| **N** | Un grand nombre qui est le produit de p et q ( premiers les deux). Il fait partie des deux clefs. |
+| **Octet** | Une petite case mémoire qui contient un nombre de 0 à 255. Une lettre = un octet/plusieurs si ya des accents. |
+| **Base64** | Une maniere d'écrire des données avec des lettres et des chiffres , pour les copier ou les envoyer par mail. |
 
 **Principe de RSA en une ligne :** chaque nombre `m` du message devient `c = m^E mod N` (chiffrement), et on retrouve `m = c^U mod N` (déchiffrement).
 
@@ -56,10 +56,6 @@ La phase 1 permet de :
 
 <a id="demarrer"></a>
 ### Démarrer
-
-Le projet est écrit en C et n'utilise aucune bibliothèque externe pour la phase 1.
-Tous les import sont des imports de la bibliotheque C.
-
 
 **Vérifier que tout marche :**
 
@@ -89,7 +85,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ./bin/phase1 tests [max]                     # lance les tests
 ```
 
-**Commandes `make` :**
+**Commandes avec `make` :**
 
 | Commande | Effet |
 |---|---|
