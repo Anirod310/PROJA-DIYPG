@@ -50,7 +50,7 @@ La phase 1 permet de :
 | **Octet** | Une petite case mémoire qui contient un nombre de 0 à 255. Une lettre = un octet (ou plusieurs pour les accents). |
 | **Base64** | Une façon d'écrire des données quelconques avec des lettres et des chiffres seulement, pour les copier ou les envoyer par mail. |
 
-**Principe de RSA en une ligne :** chaque nombre `m` du message devient `c = m^E mod N` (chiffrement), et on retrouve `m = c^U mod N` (déchiffrement). *(« mod N » signifie « le reste de la division par N ».)*
+**Principe de RSA en une ligne :** chaque nombre `m` du message devient `c = m^E mod N` (chiffrement), et on retrouve `m = c^U mod N` (déchiffrement).
 
 ---
 
