@@ -1,4 +1,4 @@
-# DIYPG – Phase 1
+# Projet DIYPG
 
 Projet de l'UE « Projet Avancé » . Le but : recréer, en version simplifiée, un outil de chiffrement comme GPG, basé sur l'algorithme **RSA**.
 
@@ -6,7 +6,9 @@ Projet de l'UE « Projet Avancé » . Le but : recréer, en version simplifiée,
 
 ---
 
-## Sommaire
+##  Phase 1
+
+### Sommaire
 
 1. [Petit résumé](#en-bref)
 2. [Petit lexique](#lexique)
@@ -24,7 +26,7 @@ Projet de l'UE « Projet Avancé » . Le but : recréer, en version simplifiée,
 ---
 
 <a id="en-bref"></a>
-## Petit résumé
+### Petit résumé
 
 La phase 1 permet de :
 
@@ -36,7 +38,7 @@ La phase 1 permet de :
 ---
 
 <a id="lexique"></a>
-## Petit lexique
+### Petit lexique
 
 | Mot | Ce que ça veut dire |
 |---|---|
@@ -53,7 +55,7 @@ La phase 1 permet de :
 ---
 
 <a id="demarrer"></a>
-## Démarrer
+### Démarrer
 
 Le projet est écrit en C et n'utilise aucune bibliothèque externe pour la phase 1.
 Tous les import sont des imports de la bibliotheque C.
@@ -72,7 +74,7 @@ La dernière ligne affichée doit être :
 ---
 
 <a id="utiliser"></a>
-## Utiliser le programme
+### Utiliser le programme
 
 Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 par défaut) :
 
@@ -102,7 +104,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-10"></a>
-## Partie 1.0 – Les clefs RSA
+### Partie 1.0 – Les clefs RSA
 
 ### Ce qu'on a fait
 
@@ -160,7 +162,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-11"></a>
-## Partie 1.1 – Chiffrer des octets
+### Partie 1.1 – Chiffrer des octets
 
 ### Ce qu'on a fait
 
@@ -181,7 +183,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-12"></a>
-## Partie 1.2 – Chiffrer un fichier
+### Partie 1.2 – Chiffrer un fichier
 
 ### Ce qu'on a fait
 
@@ -205,7 +207,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-13"></a>
-## Partie 1.3 – La conversion base64
+### Partie 1.3 – La conversion base64
 
 Un fichier chiffré contient des octets quelconques, difficiles à copier ou à envoyer par mail. Le base64 les transforme en texte simple : 3 octets deviennent 4 caractères.
 
@@ -230,7 +232,7 @@ Un fichier chiffré contient des octets quelconques, difficiles à copier ou à 
 ---
 
 <a id="tests"></a>
-## Les tests
+### Les tests
 
 Les tests sont dans `test/tests.c`. On les lance avec `make test`. Chaque test affiche `[OK]` ou `[KO]`, puis un bilan.
 
@@ -269,7 +271,7 @@ Les tests sont dans `test/tests.c`. On les lance avec `make test`. Chaque test a
 ---
 
 <a id="notes"></a>
-## Problèmes trouvés dans le code fourni
+### Problèmes trouvés dans le code fourni
 
 En testant, on a trouvé quelques défauts dans le code donné par l'enseignant. On ne l'a pas modifié : on les contourne dans notre propre code.
 
@@ -284,7 +286,7 @@ En testant, on a trouvé quelques défauts dans le code donné par l'enseignant.
 ---
 
 <a id="structure"></a>
-## Organisation des dossiers
+### Organisation des dossiers
 
 ```
 .
@@ -318,7 +320,7 @@ En testant, on a trouvé quelques défauts dans le code donné par l'enseignant.
 ---
 
 <a id="exemples"></a>
-## Exemples d'affichage
+### Exemples d'affichage
 
 Les clefs sont tirées au hasard : les valeurs changent à chaque exécution.
 
