@@ -1,10 +1,5 @@
-# =============================================================================
+
 #  DIYPG - Makefile
-#
-#  Arborescence attendue :
-#    include/   en-tetes (.h)              src/    sources du projet (.c)
-#    test/      main.c, tests.c, test_sha.c
-#    build/     fichiers objets (genere)   bin/    executables (genere)
 #
 #  Cibles :
 #    make            compile bin/phase1
@@ -13,7 +8,7 @@
 #    make sha_test   compile et lance test/test_sha.c (SHA-256)
 #    make ctrl_c     compile la demo de gestion de Ctrl-C (phase 3)
 #    make clean      supprime build/, bin/ et les fichiers de test
-# =============================================================================
+
 
 CC       = gcc
 CFLAGS   = -Wall -Wextra -g -O0
@@ -24,7 +19,7 @@ LDLIBS   =
 BUILD = build
 BIN   = bin
 
-# --- sources ----------------------------------------------------------------
+# --- sources ---
 # src/*.c uniquement (pas src/Sha256/ : doublon des fichiers sha256 de src/)
 SHA_SRC  = src/sha256.c src/sha256_utils.c
 # ctrl_c.c a son propre main() : jamais lie avec le reste
@@ -40,12 +35,17 @@ SHA_TEST_OBJ = $(call obj,$(SHA_TEST_SRC))
 CTRL_C_OBJ   = $(call obj,src/ctrl_c.c)
 DEPS = $(PHASE1_OBJ:.o=.d) $(SHA_TEST_OBJ:.o=.d) $(CTRL_C_OBJ:.o=.d)
 
+# On masque uniquement leurs warnings (format %llu, comparaisons signe, char en indice) :
+# les warnings de nos fichiers (phase1.c, main.c, tests.c...) restent affiches.
+PROVIDED_OBJ = $(call obj,src/rsa_tools.c src/bezout.c src/other_base64.c)
+$(PROVIDED_OBJ): CFLAGS += -Wno-format -Wno-sign-compare -Wno-char-subscripts
+
 .PHONY: all test overflow sha_test ctrl_c clean help
 .DEFAULT_GOAL := all
 
 all: $(BIN)/phase1
 
-# --- executables --------------------------------------------------------------
+# --- executables ---
 $(BIN)/phase1: $(PHASE1_OBJ)
 	@mkdir -p $(@D)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
@@ -58,12 +58,12 @@ $(BIN)/ctrl_c: $(CTRL_C_OBJ)
 	@mkdir -p $(@D)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-# --- compilation d'un .c -> .o (build/ reproduit l'arborescence) --------------
+# --- compilation d'un .c -> .o (build/ reproduit l'arborescence) ---
 $(BUILD)/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# --- raccourcis ---------------------------------------------------------------
+# --- raccourcis ---
 test: $(BIN)/phase1
 	./$(BIN)/phase1 tests
 
@@ -79,7 +79,7 @@ clean:
 	rm -rf $(BUILD) $(BIN) log.txt test_keys.bin
 
 help:
-	@sed -n '4,16p' Makefile
+	@sed -n '4,10p' Makefile
 
 # dependances automatiques (modifier un .h recompile les .c concernes)
 -include $(DEPS)

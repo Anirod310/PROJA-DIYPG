@@ -1,12 +1,14 @@
-# DIYPG – Phase 1
+# Projet DIYPG
 
 Projet de l'UE « Projet Avancé » . Le but : recréer, en version simplifiée, un outil de chiffrement comme GPG, basé sur l'algorithme **RSA**.
 
-**Équipe :** Dorian Bousseksou, Clément Boillat, Ethan Napoletano, Tahar Mokhtari
+**Équipe 7 :** Dorian Bousseksou (22108340), Clément Boillat (22103053), Ethan Napoletano (22204019), Tahar Mokhtari (22209563)
 
 ---
 
-## Sommaire
+##  Phase 1
+
+### Sommaire
 
 1. [Petit résumé](#en-bref)
 2. [Petit lexique](#lexique)
@@ -24,7 +26,7 @@ Projet de l'UE « Projet Avancé » . Le but : recréer, en version simplifiée,
 ---
 
 <a id="en-bref"></a>
-## Petit résumé
+### Petit résumé
 
 La phase 1 permet de :
 
@@ -36,7 +38,7 @@ La phase 1 permet de :
 ---
 
 <a id="lexique"></a>
-## Petit lexique
+### Petit lexique
 
 | Mot | Ce que ça veut dire |
 |---|---|
@@ -44,20 +46,16 @@ La phase 1 permet de :
 | **Chiffré** | Le message après chiffrement, illisible sans la clef. |
 | **Clef publique** | Sert à chiffrer. On peut la donner à n'importe qui. |
 | **Clef privée** | Sert à déchiffrer. Elle reste secrète. |
-| **N** | Un grand nombre, produit de deux nombres premiers p et q. Il fait partie des deux clefs. |
-| **Octet** | Une petite case mémoire qui contient un nombre de 0 à 255. Une lettre = un octet (ou plusieurs pour les accents). |
-| **Base64** | Une façon d'écrire des données quelconques avec des lettres et des chiffres seulement, pour les copier ou les envoyer par mail. |
+| **N** | Un grand nombre qui est le produit de p et q ( premiers les deux). Il fait partie des deux clefs. |
+| **Octet** | Une petite case mémoire qui contient un nombre de 0 à 255. Une lettre = un octet/plusieurs si ya des accents. |
+| **Base64** | Une maniere d'écrire des données avec des lettres et des chiffres , pour les copier ou les envoyer par mail. |
 
-**Principe de RSA en une ligne :** chaque nombre `m` du message devient `c = m^E mod N` (chiffrement), et on retrouve `m = c^U mod N` (déchiffrement). *(« mod N » signifie « le reste de la division par N ».)*
+**Principe de RSA en une ligne :** chaque nombre `m` du message devient `c = m^E mod N` (chiffrement), et on retrouve `m = c^U mod N` (déchiffrement).
 
 ---
 
 <a id="demarrer"></a>
-## Démarrer
-
-Le projet est écrit en C et n'utilise aucune bibliothèque externe pour la phase 1.
-Tous les import sont des imports de la bibliotheque C.
-
+### Démarrer
 
 **Vérifier que tout marche :**
 
@@ -72,7 +70,7 @@ La dernière ligne affichée doit être :
 ---
 
 <a id="utiliser"></a>
-## Utiliser le programme
+### Utiliser le programme
 
 Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 par défaut) :
 
@@ -87,7 +85,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ./bin/phase1 tests [max]                     # lance les tests
 ```
 
-**Commandes `make` :**
+**Commandes avec `make` :**
 
 | Commande | Effet |
 |---|---|
@@ -102,7 +100,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-10"></a>
-## Partie 1.0 – Les clefs RSA
+### Partie 1.0 – Les clefs RSA
 
 ### Ce qu'on a fait
 
@@ -160,7 +158,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-11"></a>
-## Partie 1.1 – Chiffrer des octets
+### Partie 1.1 – Chiffrer des octets
 
 ### Ce qu'on a fait
 
@@ -181,7 +179,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-12"></a>
-## Partie 1.2 – Chiffrer un fichier
+### Partie 1.2 – Chiffrer un fichier
 
 ### Ce qu'on a fait
 
@@ -205,7 +203,7 @@ Commandes disponibles (`max` est la valeur maximale des nombres premiers, 10000 
 ---
 
 <a id="partie-13"></a>
-## Partie 1.3 – La conversion base64
+### Partie 1.3 – La conversion base64
 
 Un fichier chiffré contient des octets quelconques, difficiles à copier ou à envoyer par mail. Le base64 les transforme en texte simple : 3 octets deviennent 4 caractères.
 
@@ -230,7 +228,7 @@ Un fichier chiffré contient des octets quelconques, difficiles à copier ou à 
 ---
 
 <a id="tests"></a>
-## Les tests
+### Les tests
 
 Les tests sont dans `test/tests.c`. On les lance avec `make test`. Chaque test affiche `[OK]` ou `[KO]`, puis un bilan.
 
@@ -269,7 +267,7 @@ Les tests sont dans `test/tests.c`. On les lance avec `make test`. Chaque test a
 ---
 
 <a id="notes"></a>
-## Problèmes trouvés dans le code fourni
+### Problèmes trouvés dans le code fourni
 
 En testant, on a trouvé quelques défauts dans le code donné par l'enseignant. On ne l'a pas modifié : on les contourne dans notre propre code.
 
@@ -284,7 +282,7 @@ En testant, on a trouvé quelques défauts dans le code donné par l'enseignant.
 ---
 
 <a id="structure"></a>
-## Organisation des dossiers
+### Organisation des dossiers
 
 ```
 .
@@ -318,7 +316,7 @@ En testant, on a trouvé quelques défauts dans le code donné par l'enseignant.
 ---
 
 <a id="exemples"></a>
-## Exemples d'affichage
+### Exemples d'affichage
 
 Les clefs sont tirées au hasard : les valeurs changent à chaque exécution.
 

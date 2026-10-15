@@ -6,7 +6,7 @@
 #include <string.h>
 #include "sha256.h"
 #include "sha256_utils.h"
-#define STRLONG 30
+#define STRLONG 100
 
 int main(){
 	int bufferSize = SHA256_BLOCK_SIZE;
