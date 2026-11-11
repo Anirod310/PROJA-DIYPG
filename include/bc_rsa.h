@@ -21,7 +21,7 @@
 
 typedef unsigned char byte;
 
-// structure générique de liste non typée (à typer à l'utilisation)
+// structure générique de liste non typée qu'il faut typer a l'utilisation
 typedef struct Slist {
 	void * info; // les elt sont des blocks ou des transactions, ce qu'on veut en fait
 	struct Slist *next;
