@@ -15,7 +15,7 @@
 #define MAX_BUF 1024
 #define MAX_STRING 64
 #define MAXTX 5 // nb max tx par bloc (tests)
-#define DIFFICULTY 4 // difficulté pour le minage
+#define DIFFICULTY 4 // niveau de difficulté 
 #define MAX_USERS 5 // nb utilisateurs (tests)
 #define HASHLENGTH (SHA256_BLOCK_SIZE*2 + 1)
 
