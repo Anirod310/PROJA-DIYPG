@@ -33,7 +33,7 @@ typedef struct block {
 	BYTE previousHash[SHA256_BLOCK_SIZE*2 + 1];
   time_t timestamp;
 	int nbTx; // nombre de transaction dans le bloc
-	struct Slist * transactions; // liste de tx le nombre doit correspondre
+	struct Slist * transactions; // liiste de tx le nombre doit correspondre
 	BYTE merkleTree[SHA256_BLOCK_SIZE*2 + 1]; // hash de l'arbre de Merkle
   BYTE blockHash[SHA256_BLOCK_SIZE*2 + 1]; // hash du bloc
   char minerName[MAX_STRING]; // nom du mineur
